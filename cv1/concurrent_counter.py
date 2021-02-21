@@ -67,8 +67,8 @@ def counter(shared):
 
 for _ in range(100):
     sh = Shared(1_000_000)
-    t1 = Thread(counter_out_of_index, sh)
-    t2 = Thread(counter_out_of_index, sh)
+    t1 = Thread(counter, sh)
+    t2 = Thread(counter, sh)
 
     # čakanie na ukončenie činnosti vlákien.
     t1.join()
