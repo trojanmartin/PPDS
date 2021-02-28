@@ -56,7 +56,7 @@ def test_sequence(sequence):
     while(i - 2 >= 0):
         if(sequence[i] != sequence[i - 2] + sequence[i - 1]):
             print("TEST FAILED")
-            break
+            return
 
         i -=1
     
