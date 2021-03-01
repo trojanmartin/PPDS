@@ -47,20 +47,23 @@ class Fibonacci:
     def count_sequence(self, thread_id):
         # každé vlákno čaká kým mu bude povolený výpočet svojho čísla
         self.synchronizer.wait(thread_id)
-        self.sequence[thread_id + 2] = self.sequence[thread_id] + self.sequence[thread_id + 1]
-        # ak posledné vlákno spravilo svoj výpočet, funkcia skončí
-        # inak, vlákno signalizaciou odblokuje nasledjúce vlákno
+        next = self.sequence[thread_id] + self.sequence[thread_id + 1]
+        self.sequence[thread_id + 2] = next
+        """ ak posledné vlákno spravilo svoj výpočet, funkcia skončí
+        inak, vlákno signalizaciou odblokuje nasledjúce vlákno """
         if(self.n == thread_id + 1):
             return
         self.synchronizer.signal(thread_id + 1)
 
     """može sa zdať ako správne riesenie, problem ale je ten,
-        že čo ak sa nejake vlakno predbehne. napriklad vlakno 5 sa dostane k zámku skor ako vlakno 4
+        že čo ak sa nejake vlakno predbehne.
+        Napriklad vlakno 5 sa dostane k zámku skor ako vlakno 4
         tym padom vlakno 5 nema z coho ratat svoju hodnotu"""
     def count_sequence_not_working(self, thread_id):
         self.shared.mutex.lock()
         print("thread %d is locked" % thread_id)
-        self.sequence[thread_id + 2] = self.sequence[thread_id] + self.sequence[thread_id + 1]
+        next = self.sequence[thread_id] + self.sequence[thread_id + 1]
+        self.sequence[thread_id + 2] = next
         self.shared.mutex.unlock()
 
 
@@ -77,17 +80,20 @@ def test_sequence(sequence):
 
 """Odpovede na otazky:
     1. Podla mojho názoru, najmenší počet synchronizačných objektov je vždy N.
-    A to z toho dovodu že každé vlákno vyžaduje inú dobu čakania, kym vykaná svoj výpočet.
+    A to z toho dovodu že každé vlákno vyžaduje inú dobu čakania,
+    kym vykaná svoj výpočet.
 
-    2. Pri riešení tohto zadania som použil synchronizačný vzor signalizácie. Pri signalizácii dáva
-    jedno vlákno signál o nejakej udalosti ktorá nastala. V mojom prípade to je o dokončení svojho výpočtu.
-    Čiže ked jedno vlákno vypočíta svoju hodnotu fibonacciho postupnosti, signalizáciou to oznámi nasledujúcemu,
+    2. Pri riešení tohto zadania som použil synchronizačný vzor signalizácie.
+    Pri signalizácii dáva jedno vlákno signál o nejakej udalosti ktorá nastala.
+    V mojom prípade to je o dokončení svojho výpočtu.
+    Čiže ked jedno vlákno vypočíta svoju hodnotu fibonacciho postupnosti,
+    signalizáciou to oznámi nasledujúcemu,
     ktoré tým pádom vie že môže vykonať svoj výpočet.
 """
 
 n = 999
-synchronizer = SemaphoreSynchronizer(n)
-# synchronizer = EventSynchronizer(n)
+# synchronizer = SemaphoreSynchronizer(n)
+synchronizer = EventSynchronizer(n)
 
 fib_counter = Fibonacci(synchronizer, n)
 
