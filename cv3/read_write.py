@@ -57,8 +57,12 @@ def read(shared, thread_id, cycles, wait):
 """Odpovede na otazky:
     5. Pri rovnakom čase čakania nastáva vyhladovanie už pri 10 čitateľoch
     a pri jednom zapisovateľovi.
-"""
 
+    7. Pri experimentálnom overovaní si myslím že vyhladovanie
+    nemôže nastať pre čitateľov. V praxi to však nemá príliš zmysel
+    skúmať, keďže čítať je dovolené viacerým naraz, zapisovať može
+    len jeden.
+"""
 
 sh = Shared()
 threads = []
