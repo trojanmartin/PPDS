@@ -30,12 +30,12 @@ class Shared():
         self.switch = LightSwitch()
 
 
-def write(shared, thread_id):
-    while True:  
+def write(shared, thread_id, cycles, wait):
+    for _ in range(cycles):  
         shared.turnstile.wait()
         shared.room_empty.wait()
         print("thread %d started WRITING" % thread_id)
-        sleep((randint(1,10)/10) + .3)    
+        sleep(wait + (randint(1,10)/10))    
         
         shared.turnstile.signal()
         shared.room_empty.signal()
@@ -43,13 +43,13 @@ def write(shared, thread_id):
         
 
 
-def read(shared, thread_id):
-    while True:
+def read(shared, thread_id, cycles, wait):
+    for _ in range(cycles):
         shared.turnstile.wait()
         shared.turnstile.signal()
         shared.switch.lock(shared.room_empty)
         print("thread %d started reading" % thread_id)
-        sleep((randint(1,10)/10)+0.3)
+        sleep(wait +(randint(1,10)/10))
         shared.switch.unlock(shared.room_empty)
         print("thread %d finished reading and signaled" % thread_id)
 
@@ -65,12 +65,15 @@ threads = []
 readers = 5
 writers = 1
 
+cycles = 50
+waiting = 0.3
+
 for i in range(readers):
-    t = Thread(read, sh,i)
+    t = Thread(read, sh,i,cycles, waiting)
     threads.append(t)
 
 for i in range(writers):
-    t = Thread(write, sh,i + readers)
+    t = Thread(write, sh,i + readers,cycles,waiting)
     threads.append(t)
 
 for t in threads:
