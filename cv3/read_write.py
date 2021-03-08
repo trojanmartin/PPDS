@@ -32,8 +32,8 @@ class Shared():
 
 def write(shared, thread_id, cycles, wait):
     for _ in range(cycles):  
-        shared.turnstile.wait()
-   #     shared.room_empty.wait()
+   #     shared.turnstile.wait()
+        shared.room_empty.wait()
         print("thread %d started WRITING" % thread_id)
         sleep(wait + (randint(1,10)/10))    
         
@@ -48,17 +48,17 @@ def read(shared, thread_id, cycles, wait):
     #    shared.turnstile.wait()
     #    shared.turnstile.signal()
         shared.switch.lock(shared.room_empty)
-      #  print("thread %d started reading" % thread_id)
+        print("thread %d started reading" % thread_id)
         sleep(wait +(randint(1,10)/10))
         shared.switch.unlock(shared.room_empty)
-     #   print("thread %d finished reading and signaled" % thread_id)
+        print("thread %d finished reading and signaled" % thread_id)
 
 
 
 sh = Shared()
 threads = []
 
-readers = 500
+readers = 10
 writers = 1
 
 cycles = 50
