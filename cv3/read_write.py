@@ -26,43 +26,51 @@ class LightSwitch():
 class Shared():
     def __init__(self):
         self.room_empty = Semaphore(1)
+        self.turnstile = Semaphore(1)
         self.switch = LightSwitch()
 
 
 def write(shared, thread_id):
     while True:
+        sleep((randint(1,10)/10) + .3)  
+        shared.turnstile.wait()
         shared.room_empty.wait()
-        print("thread %d started writing" % thread_id)
-        sleep(randint(1,10)/10)    
-        print("thread %d finished writing" % thread_id)
+        print("thread %d started WRITING" % thread_id)
+        sleep((randint(1,10)/10) + .3)    
+        
+        shared.turnstile.signal()
         shared.room_empty.signal()
+        print("thread %d finished WRITING" % thread_id)
+        
 
 
 def read(shared, thread_id):
     while True:
+        sleep((randint(1,10)/10) + .3)
+        shared.turnstile.wait()
+        shared.turnstile.signal()
         shared.switch.lock(shared.room_empty)
         print("thread %d started reading" % thread_id)
-        sleep(randint(1,10)/10)
-        print("thread %d finished reading" % thread_id)
+        sleep((randint(1,10)/10)+0.3)
         shared.switch.unlock(shared.room_empty)
+        print("thread %d finished reading" % thread_id)
 
 """
 Vytvorime vlakna, ktore chceme synchronizovat.
 Nezabudnime vytvorit aj zdielane synchronizacne objekty,
 a dat ich ako argumenty kazdemu vlaknu, ktore chceme pomocou nich
 synchronizovat.
-"""
- 
-shared = Shared()
+""" 
+sh = Shared()
 threads = []
- 
-for i in range(1):
-    t = Thread(read, shared,i)
-    threads.append(t)
 
 for i in range(1):
-    t = Thread(write, shared,i)
+    t = Thread(write, sh,i)
     threads.append(t)
- 
+
+for i in range(5):
+    t = Thread(read, sh,i)
+    threads.append(t)
+
 for t in threads:
     t.join()
