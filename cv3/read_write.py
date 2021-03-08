@@ -40,7 +40,7 @@ def write(shared, thread_id):
         
         shared.turnstile.signal()
         shared.room_empty.signal()
-        print("thread %d finished WRITING" % thread_id)
+        print("thread %d finished WRITING and signaled" % thread_id)
         
 
 
@@ -53,7 +53,7 @@ def read(shared, thread_id):
         print("thread %d started reading" % thread_id)
         sleep((randint(1,10)/10)+0.3)
         shared.switch.unlock(shared.room_empty)
-        print("thread %d finished reading" % thread_id)
+        print("thread %d finished reading and signaled" % thread_id)
 
 """
 Vytvorime vlakna, ktore chceme synchronizovat.
