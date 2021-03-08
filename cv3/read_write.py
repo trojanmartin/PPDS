@@ -31,8 +31,7 @@ class Shared():
 
 
 def write(shared, thread_id):
-    while True:
-        sleep((randint(1,10)/10) + .3)  
+    while True:  
         shared.turnstile.wait()
         shared.room_empty.wait()
         print("thread %d started WRITING" % thread_id)
@@ -46,7 +45,6 @@ def write(shared, thread_id):
 
 def read(shared, thread_id):
     while True:
-        sleep((randint(1,10)/10) + .3)
         shared.turnstile.wait()
         shared.turnstile.signal()
         shared.switch.lock(shared.room_empty)
@@ -64,12 +62,15 @@ synchronizovat.
 sh = Shared()
 threads = []
 
-for i in range(1):
-    t = Thread(write, sh,i)
+readers = 5
+writers = 1
+
+for i in range(readers):
+    t = Thread(read, sh,i)
     threads.append(t)
 
-for i in range(5):
-    t = Thread(read, sh,i)
+for i in range(writers):
+    t = Thread(write, sh,i + readers)
     threads.append(t)
 
 for t in threads:
