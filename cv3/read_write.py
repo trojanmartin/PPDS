@@ -63,11 +63,11 @@ def read(shared, thread_id, cycles, wait):
 sh = Shared()
 threads = []
 
-readers = 10
-writers = 1
+readers = 1
+writers = 100
 
 cycles = 50
-waiting = 0.3
+waiting = 0
 
 for i in range(readers):
     t = Thread(read, sh,i,cycles, waiting)
