@@ -54,6 +54,11 @@ def read(shared, thread_id, cycles, wait):
         print("thread %d finished reading and signaled" % thread_id)
 
 
+"""Odpovede na otazky:
+    5. Pri rovnakom čase čakania nastáva vyhladovanie už pri 10 čitateľoch
+    a pri jednom zapisovateľovi.
+"""
+
 
 sh = Shared()
 threads = []
