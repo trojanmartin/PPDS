@@ -33,11 +33,11 @@ class Shared():
 def write(shared, thread_id, cycles, wait):
     for _ in range(cycles):  
         shared.turnstile.wait()
-        shared.room_empty.wait()
+   #     shared.room_empty.wait()
         print("thread %d started WRITING" % thread_id)
         sleep(wait + (randint(1,10)/10))    
         
-        shared.turnstile.signal()
+    #    shared.turnstile.signal()
         shared.room_empty.signal()
         print("thread %d finished WRITING and signaled" % thread_id)
         
@@ -45,24 +45,20 @@ def write(shared, thread_id, cycles, wait):
 
 def read(shared, thread_id, cycles, wait):
     for _ in range(cycles):
-        shared.turnstile.wait()
-        shared.turnstile.signal()
+    #    shared.turnstile.wait()
+    #    shared.turnstile.signal()
         shared.switch.lock(shared.room_empty)
-        print("thread %d started reading" % thread_id)
+      #  print("thread %d started reading" % thread_id)
         sleep(wait +(randint(1,10)/10))
         shared.switch.unlock(shared.room_empty)
-        print("thread %d finished reading and signaled" % thread_id)
+     #   print("thread %d finished reading and signaled" % thread_id)
 
-"""
-Vytvorime vlakna, ktore chceme synchronizovat.
-Nezabudnime vytvorit aj zdielane synchronizacne objekty,
-a dat ich ako argumenty kazdemu vlaknu, ktore chceme pomocou nich
-synchronizovat.
-""" 
+
+
 sh = Shared()
 threads = []
 
-readers = 5
+readers = 500
 writers = 1
 
 cycles = 50
