@@ -24,16 +24,35 @@ class LightSwitch():
             semaphore.signal()
         self.mutex.unlock()
 
+class SimpleBarrier:
+    def __init__(self, n):
+        self.n = n
+        self.count = 0
+        self.mutex = Mutex()        
+        self.event = Event()
+    
+    def wait_with_events(self):
+        self.mutex.lock()        
+        self.count += 1
+        if self.count == self.n:
+            self.event.signal()
+        self.mutex.unlock()
+        self.event.wait()
+
+
 
 class Elektraren():
     def __init__(self):
         self.cidla_ls = LightSwitch()        
         self.monitor_ls = LightSwitch()
         self.no_cidla = Semaphore(1)
-        self.no_monitor = Semaphore(1)       
+        self.no_monitor = Semaphore(1)
+        self.barrier = SimpleBarrier(3)        
+        self.data_ready = Event()
 
     def monitor(self,monitor_id):
-        while True:                     
+        while True:              
+            self.barrier.event.wait()         
             self.no_monitor.wait()                       
 
             pocet_citajucich_monitorov = self.monitor_ls.lock(self.no_cidla)
@@ -53,10 +72,12 @@ class Elektraren():
 
             print('cidlo "%02d": pocet_zapisujucich_cidiel=%02d, trvanie_zapisu=%03f\n' % (cidlo_id,pocet_zapisujucich_cidiel,waiting))
             sleep(waiting)  
+
             self.no_cidla.signal()     
+            self.barrier.wait_with_events()
             self.cidla_ls.unlock(self.no_monitor)
             
-
+            
 elek = Elektraren()
 threads = []
 for i in range(2):
