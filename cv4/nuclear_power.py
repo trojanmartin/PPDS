@@ -61,13 +61,13 @@ class Elektraren():
             sleep(waiting)
             self.monitor_ls.unlock(self.no_cidla)
 
-    def cidlo(self, cidlo_id, waiting):
+    def cidlo(self, cidlo_id, min,max):
         while True:
             sleep(randint(50, 60)/1000)
 
             pocet_zapisujucich_cidiel = self.cidla_ls.lock(self.no_monitor)
             self.no_cidla.wait()
-
+            waiting = randint(min, max)/1000            
             print('cidlo "%02d": pocet_zapisujucich_cidiel=%02d, trvanie_zapisu=%03f\n' % (cidlo_id, pocet_zapisujucich_cidiel, waiting))
             sleep(waiting)
 
@@ -78,9 +78,9 @@ class Elektraren():
 elek = Elektraren()
 threads = []
 for i in range(2):
-    t = Thread(elek.cidlo, i, randint(10, 20)/1000)
+    t = Thread(elek.cidlo, i, 10, 20)
     threads.append(t)
-t = Thread(elek.cidlo, 2, randint(20, 25)/1000)
+t = Thread(elek.cidlo, 2, 20, 25)
 threads.append(t)
 
 for i in range(8):
