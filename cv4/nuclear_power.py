@@ -48,7 +48,6 @@ class Elektraren():
         self.no_cidla = Semaphore(1)
         self.no_monitor = Semaphore(1)
         self.barrier = SimpleBarrier(3)
-        self.data_ready = Event()
 
     def monitor(self, monitor_id):
         while True:
