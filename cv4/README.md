@@ -6,8 +6,13 @@ Je to tak kvoli tomu ,že monitory k dátam iba pristupujú a teda ich nemodifik
 Zároveň je možné aby aj čidlá zapisovali naraz, keďže každé čidlo zapisuje na 
 vlastné miesto. 
 Zároveň je potrebné riešiť problém vyhladovania. Keďže monitorov je 8, a čidlá sú len 3, je potrebné
-dať prioritu. 
+dať prioritu pre čidlá.
+Monitory taktiež môžu začať čítať dáta až vtedy, keď už všetky čidlá aspoň raz zapísali dáta.   
 
+- Vzájomné vylúčenie bude implementačne riešené pomocou LightSwitch-u. Tým zabezpečíme že v jednom čase môže k dátam
+pristúpiť vždy len jedna skupina procesov. Pre to aby boli čidlá uprednostnené je taktiež potrebné použitie dvoch lighswitchov.
+- To aby monitory začali čítať až po zapísaní prvých dát všetkými čidlami implementujeme pomocou bariéry a následnej signalizácie. Bariéra bude implementovaná pomocou Eventu a monitory budú čakať až kým sa daný event nenastavaví. To sa udeje
+keď všetky čidlá vykonajú svoje merianie aspoň raz.
 ## Pseudo kód
 ```py
 def init():
