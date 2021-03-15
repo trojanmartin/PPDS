@@ -57,18 +57,26 @@ class Elektraren():
             pocet_citajucich_monitorov = self.monitor_ls.lock(self.no_cidla)
             self.no_monitor.signal()
             waiting = randint(40, 50)/1000
-            print('monit "%02d": pocet_citajucich_monitorov=%02d, trvanie_citania=%03f\n' % (monitor_id, pocet_citajucich_monitorov, waiting))
+            print(
+                'monit "%02d": pocet_citajucich_monitorov=%02d'
+                'trvanie_citania=%03f\n'
+                % (monitor_id, pocet_citajucich_monitorov, waiting)
+            )
             sleep(waiting)
             self.monitor_ls.unlock(self.no_cidla)
 
-    def cidlo(self, cidlo_id, min,max):
+    def cidlo(self, cidlo_id, min, max):
         while True:
             sleep(randint(50, 60)/1000)
 
             pocet_zapisujucich_cidiel = self.cidla_ls.lock(self.no_monitor)
             self.no_cidla.wait()
-            waiting = randint(min, max)/1000            
-            print('cidlo "%02d": pocet_zapisujucich_cidiel=%02d, trvanie_zapisu=%03f\n' % (cidlo_id, pocet_zapisujucich_cidiel, waiting))
+            waiting = randint(min, max)/1000
+            print(
+                'cidlo "%02d": pocet_zapisujucich_cidiel=%02d'
+                'trvanie_zapisu=%03f\n'
+                % (cidlo_id, pocet_zapisujucich_cidiel, waiting)
+            )
             sleep(waiting)
 
             self.no_cidla.signal()
