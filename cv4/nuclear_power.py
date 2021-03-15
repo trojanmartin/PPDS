@@ -71,6 +71,7 @@ class Elektraren():
 
             pocet_zapisujucich_cidiel = self.cidla_ls.lock(self.no_monitor)
             self.no_cidla.wait()
+            self.no_cidla.signal()
             waiting = randint(min, max)/1000
             print(
                 'cidlo "%02d": pocet_zapisujucich_cidiel=%02d'
@@ -78,8 +79,7 @@ class Elektraren():
                 % (cidlo_id, pocet_zapisujucich_cidiel, waiting)
             )
             sleep(waiting)
-
-            self.no_cidla.signal()
+            
             self.barrier.wait_with_events()
             self.cidla_ls.unlock(self.no_monitor)
 
