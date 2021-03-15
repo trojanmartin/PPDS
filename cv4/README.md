@@ -48,11 +48,11 @@ def cidlo(cidlo_id, waiting):
         pocet_zapisujucich_cidiel = cidla_ls.lock(no_monitor)
         //caka sa kym monitory vyprazdna miestnost
         no_cidla.wait()
+        no_cidla.signal()
         print('cidlo "%02d": pocet_zapisujucich_cidiel=%02d, trvanie_zapisu=%03f\n' % (cidlo_id, pocet_zapisujucich_cidiel, waiting))
         //simulacia času zapisovania
         sleep(waiting)
-        
-        no_cidla.signal()
+                
         //čaká sa kým všetky tri cidla skončia prvé zapisovani dat
         //Bariera je implementovana pomocou Eventu, čiže pri dalšich iteraciach nijako neovplyvnuje beh programu
         barrier.wait()
