@@ -10,37 +10,7 @@ Preto ich nedavame do zdielaneho objektu.
 """
 M = 5
 N = 3
-K = 3
- 
- 
-class SimpleBarrier:
-    """Vlastna implementacia bariery
-    kvoli specialnym vypisom vo funkcii wait().
-    """
- 
-    def __init__(self, N):
-        self.N = N
-        self.mutex = Mutex()
-        self.cnt = 0
-        self.sem = Semaphore(0)
- 
-    def wait(self,
-             print_str,
-             savage_id,
-             print_last_thread=False,
-             print_each_thread=False):
-        self.mutex.lock()
-        self.cnt += 1
-        if print_each_thread:
-            print(print_str % (savage_id, self.cnt))
-        if self.cnt == self.N:
-            self.cnt = 0
-            if print_last_thread:
-                print(print_str % (savage_id))
-            self.sem.signal(self.N)
-        self.mutex.unlock()
-        self.sem.wait()
- 
+K = 3 
  
 class Shared: 
     def __init__(self):
@@ -75,7 +45,7 @@ def savage(savage_id, shared):
         print("divoch %2d: pocet zostavajucich porcii v hrnci je %2d" %
               (savage_id, shared.servings))
         if shared.servings == 0:
-            print("divoch %2d: budim kuchara" % savage_id)
+            print("divoch %2d: budim kucharov" % savage_id)
             shared.empty_pot.set()
             shared.full_pot.wait()
         get_serving_from_pot(savage_id, shared)
@@ -99,15 +69,7 @@ def put_servings_in_pot(cook_id, shared):
     shared.servings += 1
  
  
-def cook(cook_id, M, shared):
-    """Na strane kuchara netreba robit ziadne modifikacie kodu.
-    Riesenie je standardne podla prednasky.
-    Navyse je iba argument M, ktorym explicitne hovorime, kolko porcii
-    ktory kuchar vari.
-    Kedze v nasom modeli mame iba jedneho kuchara, ten navari vsetky
-    potrebne porcie a vlozi ich do hrnca.
-    """
- 
+def cook(cook_id, M, shared): 
     while True:
 
         """Vsetci kuchari cakaju kym bude hrniec prazdny.
@@ -121,16 +83,15 @@ def cook(cook_id, M, shared):
         Ak je event nastaveny a vlakno sa nachadza v mutexe, znamena
         to ze niekto pred nim uz oznamil divochom radostnu spravu o plnom hrnci
         a dane vlakno nemusi robit nic"""
-        shared.cook_mutex.lock()               
+        shared.cook_mutex.lock()                       
         if(M == shared.servings and shared.empty_pot.isSet()):
             shared.empty_pot.clear()
+            print("kuchar %2d oznamuje divochom ze hrnciec je plny" % cook_id)
             shared.full_pot.signal()
-        shared.cook_mutex.unlock()
 
-        """Ak som navaril, ale medzitym sa hrniec naplnil cakam
-        kym bude znova prazdny"""
         shared.empty_pot.wait()
-        put_servings_in_pot(cook_id, shared)        
+        put_servings_in_pot(cook_id, shared)
+        shared.cook_mutex.unlock()        
  
  
 def init_and_run(N, M):
