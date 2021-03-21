@@ -1,8 +1,9 @@
-# Cvičenie 4
+# Cvičenie 5
 
 - Ide o úlohu Hodujúcich divochov, ktorá je založená na myšlienke Producentov a konzumentov.
 Je však rozšírená o sledovanie stavu buffra, kedy kuchári nemôžu navariť viac
-ako sa zmestí do hrnca.  
+ako sa zmestí do hrnca.  Je teda potrebné kontrolovať stav systému a na to som použil
+vzor scoreboard, kde vláknom po jednom kontroluju aktualny stav systemu. 
 
 ## Pseudo kód
 ```py
