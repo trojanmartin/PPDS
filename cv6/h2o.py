@@ -9,7 +9,7 @@ class Barrier:
         self.counter = 0
         self.mutex = Mutex()
         self.semaphore = Semaphore(0)
- 
+
     def wait(self):
         self.mutex.lock()
         self.counter += 1
@@ -24,15 +24,17 @@ class Shared():
     def __init__(self):
         self.mutex = Semaphore(1)
         self.hydrogen = 0
-        self.oxygen = 0      
+        self.oxygen = 0
         self.barrier = Barrier(3)
         self.oxygenQueue = Semaphore(0)
-        self.hydrogenQueue = Semaphore(0)  
+        self.hydrogenQueue = Semaphore(0)
+
 
 def bond():
     # vytvorenie molekuly nieco trva
     print("Bondujem sa")
     sleep(0.2 + randint(0, 3) / 10)
+
 
 def oxygen(shared):
     shared.mutex.wait()
@@ -40,7 +42,7 @@ def oxygen(shared):
 
     print("Oxygen: Som sam")
 
-    """Kedze oxygen musi byt len jeden, treba kontrolovat 
+    """Kedze oxygen musi byt len jeden, treba kontrolovat
     ci je dostatok hydrogenov. Ak nieje mozme odomknut mutex
     pre pristup dalsich vlakien do KO"""
     if(shared.hydrogen < 2):
@@ -72,7 +74,7 @@ def hydrogen(shared):
     print("Hydrogen: prichadzam")
     shared.hydrogen += 1
 
-     """Kedze oxygen musi byt len jeden, treba kontrolovat 
+    """Kedze oxygen musi byt len jeden, treba kontrolovat
     ci je dostatok hydrogenov. Ak nieje mozme odomknut mutex
     pre pristup dalsich vlakien do KO"""
     if(shared.hydrogen < 2 or shared.oxygen < 1):
