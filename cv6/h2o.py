@@ -96,7 +96,6 @@ def hydrogen(shared):
     bond()
 
     print("Hydrogen: Skoncil som bondovanie, cakam na bariere")
-    """Po uspesnom spojeni povolim pristup dalsim"""
     shared.barrier.wait()
 
 threads = list()
