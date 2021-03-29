@@ -40,10 +40,16 @@ def oxygen(shared):
 
     print("Oxygen: Som sam")
 
+    """Kedze oxygen musi byt len jeden, treba kontrolovat 
+    ci je dostatok hydrogenov. Ak nieje mozme odomknut mutex
+    pre pristup dalsich vlakien do KO"""
     if(shared.hydrogen < 2):
         print("Oxygen: je nas malo, odomykam mutex")
         shared.mutex.signal()
 
+    """Ak je dostatok (1 oxygen, 2x hydrogen)
+    mozu sa spojit. Cize tie ktore sa spojili odpocitam
+    z pocitadiel. Taktiez ich mozem vybrat z frontu cakajucih"""
     else:
         shared.oxygen -= 1
         shared.hydrogen -= 2
@@ -55,7 +61,9 @@ def oxygen(shared):
     bond()
 
     print("Oxygen: Skoncil som bondovanie, cakam na bariere")
+    """Jednotlive vlakna pockaju kym skoncia spajanie"""
     shared.barrier.wait()
+    """Po uspesnom spojeni povolim pristup dalsim"""
     shared.mutex.signal()
 
 
@@ -64,10 +72,16 @@ def hydrogen(shared):
     print("Hydrogen: prichadzam")
     shared.hydrogen += 1
 
+     """Kedze oxygen musi byt len jeden, treba kontrolovat 
+    ci je dostatok hydrogenov. Ak nieje mozme odomknut mutex
+    pre pristup dalsich vlakien do KO"""
     if(shared.hydrogen < 2 or shared.oxygen < 1):
         print("Hydrogen: je nas malo, odomykam mutex")
         shared.mutex.signal()
 
+    """Ak je dostatok (1 oxygen, 2x hydrogen)
+    mozu sa spojit. Cize tie ktore sa spojili odpocitam
+    z pocitadiel. Taktiez ich mozem vybrat z fronty cakajucih"""
     else:
         shared.oxygen -= 1
         shared.hydrogen -= 2
@@ -75,10 +89,12 @@ def hydrogen(shared):
         shared.hydrogenQueue.signal(2)
 
     print("Hydrogen: cakam v queue")
+    """Jednotlive vlakna pockaju kym skoncia spajanie"""
     shared.hydrogenQueue.wait()
     bond()
 
     print("Hydrogen: Skoncil som bondovanie, cakam na bariere")
+    """Po uspesnom spojeni povolim pristup dalsim"""
     shared.barrier.wait()
 
 threads = list()
