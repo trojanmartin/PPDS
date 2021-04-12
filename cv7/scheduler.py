@@ -57,7 +57,11 @@ class CoroutineScheduler:
             self.high.put(coroutine)
 
     def any(self):
-        return not self.low.empty() or not self.normal.empty() or not self.high.empty()
+        low = not self.low.empty()
+        normal = not self.normal.empty()
+        high = not self.high.empty()
+
+        return low or normal or high
 
     def start(self):
         while self.any():
