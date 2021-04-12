@@ -2,22 +2,24 @@ from enum import Enum
 from queue import Queue
 import random
 
+
 def test1():
-    while True:
+    for a in range(5000):
         print("Test 1")
         yield
 
 
 def test2():
-    while True:
+    for a in range(5000):
         print("Test 2")
         yield
 
 
 class Priority(Enum):
-    LOW = 1 
+    LOW = 1
     NORMAL = 2
-    HIGH = 3 
+    HIGH = 3
+
 
 class Coroutine:
     def __init__(self, method):
@@ -42,34 +44,35 @@ class CoroutineScheduler:
 
     def add(self, method, priority):
         coroutine = Coroutine(method)
-        self.schedule(coroutine, priority)     
-     
+        self.schedule(coroutine, priority)
+
     def schedule(self, coroutine, priority):
         if priority == Priority.LOW:
             self.low.put(coroutine)
-        
+
         if priority == Priority.NORMAL:
             self.normal.put(coroutine)
 
         if priority == Priority.HIGH:
             self.high.put(coroutine)
 
+    def any(self):
+        return not self.low.empty() or not self.normal.empty() or not self.high.empty()
 
     def start(self):
-        while True:
-            val = random.randint(1,10)
+        while self.any():
+            val = random.randint(1, 10)
 
             if val >= 6:
                 self.run(self.high, Priority.HIGH)
 
             elif val >= 3:
                 self.run(self.normal, Priority.NORMAL)
-            
+
             else:
                 self.run(self.low, Priority.LOW)
 
-
-    def run(self,queue, priority):
+    def run(self, queue, priority):
         if(queue.empty()):
             return
 
@@ -78,10 +81,6 @@ class CoroutineScheduler:
 
         if(not coroutine.IsFinished()):
             self.schedule(coroutine, priority)
-    
-
-
-
 
 if __name__ == "__main__":
     scheduler = CoroutineScheduler()
