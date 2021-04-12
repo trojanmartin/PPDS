@@ -1,5 +1,6 @@
-from queue import PriorityQueue
 from enum import Enum
+from queue import Queue
+import random
 
 def test1():
     while True:
@@ -8,10 +9,15 @@ def test1():
 
 
 def test2():
-    for a  in range(10):
+    while True:
         print("Test 2")
         yield
 
+
+class Priority(Enum):
+    LOW = 1 
+    NORMAL = 2
+    HIGH = 3 
 
 class Coroutine:
     def __init__(self, method):
@@ -30,20 +36,49 @@ class Coroutine:
 
 class CoroutineScheduler:
     def __init__(self):
-        self.couroutines = PriorityQueue()
+        self.low = Queue()
+        self.normal = Queue()
+        self.high = Queue()
 
     def add(self, method, priority):
         coroutine = Coroutine(method)
-        self.couroutines.put((priority, coroutine))     
+        self.schedule(coroutine, priority)     
      
+    def schedule(self, coroutine, priority):
+        if priority == Priority.LOW:
+            self.low.put(coroutine)
+        
+        if priority == Priority.NORMAL:
+            self.normal.put(coroutine)
 
-    def run(self):
+        if priority == Priority.HIGH:
+            self.high.put(coroutine)
+
+
+    def start(self):
         while True:
-            (priority, cor) = self.couroutines.get()
-            cor.run()
+            val = random.randint(1,10)
 
-            if not cor.IsFinished():
-                self.couroutines.put((priority, cor))
+            if val >= 6:
+                self.run(self.high, Priority.HIGH)
+
+            elif val >= 3:
+                self.run(self.normal, Priority.NORMAL)
+            
+            else:
+                self.run(self.low, Priority.LOW)
+
+
+    def run(self,queue, priority):
+        if(queue.empty()):
+            return
+
+        coroutine = queue.get()
+        coroutine.run()
+
+        if(not coroutine.IsFinished()):
+            self.schedule(coroutine, priority)
+    
 
 
 
@@ -51,7 +86,7 @@ class CoroutineScheduler:
 if __name__ == "__main__":
     scheduler = CoroutineScheduler()
 
-    scheduler.add(test1(),5)
-    scheduler.add(test2(),4)
+    scheduler.add(test1(), Priority.HIGH)
+    scheduler.add(test2(), Priority.LOW)
 
-    scheduler.run()
+    scheduler.start()
