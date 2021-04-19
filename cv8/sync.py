@@ -20,7 +20,8 @@ def download(shared):
 
 
 def main():
-    download()
+    share = Shared()
+    download(share)
 
 
 if __name__ == "__main__":
