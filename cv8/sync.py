@@ -1,8 +1,10 @@
 import requests
 
+
 class Shared:
-    def __init__(self):        
+    def __init__(self):
         self.finished = False
+
 
 def Progress(shared):
     while(not shared.finished):
@@ -12,12 +14,13 @@ def Progress(shared):
 
 def download(shared):
     print("Starting dowloading")
-    r = requests.get(url = "https://www.google.com")
-    shared.finished = True    
-    print("Downloading finished")        
+    r = requests.get(url="https://www.google.com")
+    shared.finished = True
+    print("Downloading finished")
+
 
 def main():
-    download()        
+    download()
 
 
 if __name__ == "__main__":
