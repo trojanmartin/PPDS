@@ -1,8 +1,9 @@
 import aiohttp
 import asyncio
 
+
 class Shared:
-    def __init__(self):        
+    def __init__(self):
         self.finished = False
 
 
@@ -18,11 +19,10 @@ async def download(shared):
         async with session.get('https://www.google.com') as resp:
             shared.finished = True
             print("Downloading finished")
-                
 
 async def main():
     share = Shared()
-    await asyncio.gather(Progress(share),download(share))        
+    await asyncio.gather(Progress(share), download(share))
 
 
 if __name__ == "__main__":
