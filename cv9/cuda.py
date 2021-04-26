@@ -9,10 +9,10 @@ import math
 def my_kernel(first_array, second_array):
     pos = cuda.grid(1)
     if pos < first_array.size:
-        first_array[pos] += second_array[pos] # do the computation
+        first_array[pos] += second_array[pos]  # do the computation
 
 
-# Host code   
+# Host code
 first_array = numpy.ones(256)
 second_array = numpy.ones(256) * 10
 threadsperblock = 256
